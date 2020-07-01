@@ -9,3 +9,8 @@ export const change_style = (style) => ({
   type: types.CHANGE_STYLE,
   style
 })
+
+export const change_style_data = styledata => ({
+  type: types.CHANGE_STYLE_DATA,
+  styledata
+})

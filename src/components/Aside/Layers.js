@@ -1,9 +1,26 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
-const Layers = () => {
+import styled from 'styled-components'
+
+const ItemWrap = styled.ol`
+  position: relative;
+  overflow: auto;
+`
+
+
+const Layers = ({styledata}) => {
+  const Items = styledata.layers.map(l => (<li key={l.id}>{l.id}</li>))
+
   return (
-    <div>图层控制</div>
+    <ItemWrap>
+      {Items}
+    </ItemWrap>
   )
 }
 
-export default Layers
+const mapStateToProps = state => ({
+  styledata: state.styledata
+})
+
+export default connect(mapStateToProps)(Layers)

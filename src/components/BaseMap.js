@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { connect } from 'react-redux'
+import { change_style_data } from '../redux/actions'
 
 import mapboxgl from 'mapbox-gl'
 import MapboxLanguage from '@mapbox/mapbox-gl-language'
@@ -13,33 +14,46 @@ const Map = styled.div`
   overflow: hidden;
 `
 
+const mapboxLanguage = new MapboxLanguage({ defaultLanguage: 'zh' })
+
 class BaseMap extends React.Component {
   componentDidMount() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiZGFob25nIiwiYSI6ImNpZjUyNDA2bTA4N2ZzcG0zY2F2MHdldm0ifQ.XzSEPxMgbwglS7L66m1Nyw';
 
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v10',
+      style: this.props.style,
       center: [120.1, 30.2],
       zoom: 9
     })
 
-    this.map.addControl(new MapboxLanguage({ defaultLanguage: 'zh' }));
+    this.map.addControl(mapboxLanguage);
+
+    this.map.on('styledata', () => {
+      this.props.changeStyleData(this.map.getStyle())
+    })
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     this.map.setStyle(this.props.style)
+    this.map.addControl(mapboxLanguage);
   }
 
   render() {
     return (
       <Map id="map" />
     )
-  } 
+  }
 }
 
 const mapStateToProps = state => ({
   style: state.style
 })
 
-export default connect(mapStateToProps)(BaseMap)
+const mapDispatchToProps = dispatch => ({
+  changeStyleData(styledata) {
+    dispatch(change_style_data(styledata))
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(BaseMap)
